@@ -1,0 +1,70 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
+    defaultConfig {
+        applicationId "com.example.uberv.nativeapp"
+        minSdkVersion 21
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    // Link CMake project to our Gradle project
+    externalNativeBuild {
+        cmake {
+            // point to our CMakeLists file
+            path 'CMakeLists.txt'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // Android NDK will generate shared library files for each supported ABI
+    // and include all those into the final APK
+    // To reduce APK sice, split build into multiple APK files, one for each supported ABI:
+    flavorDimensions "abi"
+    productFlavors {
+        x86 {
+            ndk {
+                abiFilter "x86"
+            }
+            dimension "abi"
+        }
+        arm {
+            ndk {
+                abiFilter "armeabi-v7a"
+            }
+            dimension "abi"
+        }
+        arm {
+            ndk {
+                abiFilter "armeabi"
+            }
+            dimension "abi"
+        }
+        mips {
+            ndk {
+                abiFilter "mips"
+            }
+            dimension "abi"
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+}
